@@ -198,7 +198,7 @@ function fillArmorTable() {
     }
     
     // Check encumbrance penalty
-    if (encumbrance[s] > 0) {
+    if (encumbrance[s] != 0) {
       var encString = encumbrance[s].toFixed(1) + '';
       var armorSkill = Number(characterSheet.getRange(cellLocation.armorSkillTop, cellLocation.armorSkillLeft).getValue());
       if (armorSkill < encumbrance[s]) {
@@ -210,10 +210,10 @@ function fillArmorTable() {
     }
     
     // Check the stealth penalty
-    if (stealthPenalty[s] > 0) { protectionTable.getCell(33, ((s + 1)*3)-2).setValue(stealthPenalty[s]); }
+    if (stealthPenalty[s] != 0) { protectionTable.getCell(33, ((s + 1)*3)-2).setValue(stealthPenalty[s]); }
     
     // Check the concealment Penalty
-    if (concealmentPenalty[s] > 0) { protectionTable.getCell(34, ((s + 1)*3)-2).setValue(concealmentPenalty[s]); }
+    if (concealmentPenalty[s] != 0) { protectionTable.getCell(34, ((s + 1)*3)-2).setValue(concealmentPenalty[s]); }
   }
 }
 
