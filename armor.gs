@@ -10,11 +10,17 @@ function onInstall(e) {
  * Runs whenever the spreadsheet is open
  */
 function onOpen(e) {
+  /*
     var spreadsheet = SpreadsheetApp.getActive();
     var menuItems = [
       { name: 'Fill in Armor Table', functionName: 'fillArmorTable'}
     ];
     spreadsheet.addMenu('Character Sheet', menuItems);
+    */
+  var ui = SpreadsheetApp.getUi();
+  ui.createMenu('Dragonfire')
+    .addItem('Fill in Armor Table', 'fillArmorTable')
+    .addToUi();
 }
 
 /**
@@ -22,6 +28,7 @@ function onOpen(e) {
  * extracted from the Armor table
  */
 function fillArmorTable() {
+  console.log('------------armor Fill table start');
   var cellLocation = {
     armorTop: 111,
     armorLeft: 2,
@@ -83,7 +90,6 @@ function fillArmorTable() {
     if (protection == "") { continue; }
     var protectNumbers = parseRanges(protection);
     
-    console.log('protect numbers', protectNumbers);
     // Loop over Armor Sets
     for (var armorCol = 0; armorCol < armorSets.length; armorCol ++) {
       
@@ -92,6 +98,7 @@ function fillArmorTable() {
       // Loop over Protection Numbers
       for (var protectNumber in protectNumbers) {
         var protectNum = protectNumbers[protectNumber];
+        console.log('protectNum', protectNum);
         
         // Is range
         if (protectNum == 'nf') {
@@ -109,6 +116,7 @@ function fillArmorTable() {
         }
         
         if (armorDoubleLocations.indexOf(protectNum) !== -1) {
+          console.log('armorDouble' + protectNum, armorTable[protectNum][armorSet]);
           armorTable[protectNum][armorSet][0] += armorValue;
           armorTable[protectNum][armorSet][1] += armorValue;
         } else {
@@ -137,7 +145,7 @@ function fillArmorTable() {
       
       // If we're a double counted area, handle separately
       if (armorDoubleLocations.indexOf(i) != -1) {
-        
+        console.log('armor Double Location' + i, armorTable[i][s]);
         // If the values are the same, then just show a single number
         if (armorTable[i][s][0] == armorTable[i][s][1]) {
           
@@ -217,7 +225,8 @@ function parseRanges(inputRanges)
         returnArr.push(i2);
       }
     } else {
-      returnArr.push(arr[i1].trim());
+      var val = arr[i1].trim();
+      returnArr.push(isNumeric(val) ? parseInt(val) : val);
     }
   }
   
