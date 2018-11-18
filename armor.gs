@@ -1,4 +1,15 @@
 /**
+ * The allowable shorthand notation.
+ * nf = No Face (no armor), location 1
+ * pf = Partial Face (partial armor), location 1
+ * ng = No Groin (no armor), location 26
+ * fo = Front Only 
+ */
+var allowableShorthand = [
+  'nf', 'pf', 'ng', 'fo',
+];
+
+/**
  * @OnlyCurrentDoc Limits the script to only accessing the current sheet.
  */
 
@@ -59,7 +70,7 @@ function fillArmorTable() {
   var protectionTable = characterSheet.getRange(cellLocation.protectionTop, cellLocation.protectionLeft, cellLocation.protectionRows, cellLocation.protectionCols);
   
   var armorTable = [];
-  var armorDoubleLocations = [1, 2, 4, 26];
+  var armorDoubleLocations = [1, 2, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 26];
   for (var i = 1; i <= 30; i++) {
     if (armorDoubleLocations.indexOf(i) != -1) {
       armorTable[i] = [ [ 0, 0 ], [ 0, 0 ], [ 0, 0 ], [ 0, 0 ] ];
@@ -101,18 +112,24 @@ function fillArmorTable() {
         console.log('protectNum', protectNum);
         
         // Is range
-        if (protectNum == 'nf') {
-//          faceCoverage[armorSet] = 0;
-          armorTable[1][armorSet][0] -= armorValue;
-          continue;
-        } else if (protectNum == 'pf') {
-//          faceCoverage[armorSet] = 1;
-          armorTable[1][armorSet][0] -= Math.round(armorValue / 2);
-          continue;
-        } else if (protectNum == 'ng') {
-//          groinCoverage[armorSet] = 0;
-          armorTable[26][armorSet][0] -= armorValue;
-          continue;
+        switch (protectNum) {
+          case 'nf':
+            armorTable[1][armorSet][0] -= armorValue;
+            continue;
+            
+          case 'pf':
+            armorTable[1][armorSet][0] -= Math.round(armorValue / 2);
+            continue;
+            
+          case 'ng':
+            armorTable[26][armorSet][0] -= armorValue;
+            continue;
+            
+          case 'fo':
+            for (var i = 5; i <= 15; i++) {
+              armorTable[i][armorSet][0] -= armorValue;
+            }
+            continue;
         }
         
         if (armorDoubleLocations.indexOf(protectNum) !== -1) {
@@ -226,7 +243,13 @@ function parseRanges(inputRanges)
       }
     } else {
       var val = arr[i1].trim();
-      returnArr.push(isNumeric(val) ? parseInt(val) : val);
+      if (!isNumeric(val)) {
+        if (allowableShorthand.indexOf(val) != -1) {
+          returnArr.push(val);
+        }
+      } else {
+        returnArr.push(parseInt(val));
+      }
     }
   }
   
